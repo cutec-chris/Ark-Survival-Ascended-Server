@@ -191,6 +191,7 @@ start_server() {
     local battleye_arg=""
     local rcon_args=""
     local custom_args=""
+    local cluster_id_arg=""
     local server_password_arg=""
     local session_name_arg="SessionName=\"${SESSION_NAME}\""
     
@@ -220,13 +221,17 @@ start_server() {
         custom_args="$CUSTOM_SERVER_ARGS"
     fi
 
+    if [ -n "$CLUSTER_ID" ]; then
+        cluster_id_arg="$CLUSTER_ID"
+    fi
+
     if [ -n "$SERVER_PASSWORD" ]; then
         server_password_arg="?ServerPassword=${SERVER_PASSWORD}"
     fi
     # Start the server with conditional arguments
     sudo -u games wine "$ASA_DIR/Binaries/Win64/ArkAscendedServer.exe" \
         $MAP_PATH?listen?$session_name_arg?Port=${ASA_PORT}${rcon_args}${server_password_arg}?ServerAdminPassword=${SERVER_ADMIN_PASSWORD} \
-        -WinLiveMaxPlayers=${MAX_PLAYERS} -clusterid=${CLUSTER_ID} \
+        -WinLiveMaxPlayers=${MAX_PLAYERS} $cluster_id_arg \
         -servergamelog -servergamelogincludetribelogs -ServerRCONOutputTribeLogs -NotifyAdminCommandsInChat -nosteamclient $custom_args \
         $mods_arg $battleye_arg $passive_mods_arg 2>/dev/null &
 
